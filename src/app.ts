@@ -1,4 +1,4 @@
-import type { INestApplication } from '@nestjs/common';
+import type { INestApplication, NestInterceptor, PipeTransform } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
@@ -9,10 +9,26 @@ class App {
 
   async init() {
     this.#configureSwagger();
+    this.#enableCors({ origin: true, credentials: true });
 
     await this.app.listen(this.#configService.get('PORT') || 8000, () => {
-      console.log(`Server Started on http://localhost:${this.#configService.get('PORT')}`);
+      console.info(`Server Started on http://localhost:${this.#configService.get('PORT')} 🔥`);
     });
+  }
+
+  configureMiddleware(...middlewares: any[]) {
+    this.app.use(...middlewares);
+    return this;
+  }
+
+  configurePipes(...pipes: PipeTransform<any>[]) {
+    this.app.useGlobalPipes(...pipes);
+    return this;
+  }
+
+  configureInterceptors(...interceptors: NestInterceptor[]) {
+    this.app.useGlobalInterceptors(...interceptors);
+    return this;
   }
 
   #configureSwagger() {
@@ -34,6 +50,10 @@ class App {
     const document = SwaggerModule.createDocument(this.app, swaggerConfig);
 
     SwaggerModule.setup('api-docs', this.app, document);
+  }
+
+  #enableCors(options: Parameters<INestApplication['enableCors']>[0]) {
+    this.app.enableCors(options);
   }
 }
 
