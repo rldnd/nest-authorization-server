@@ -1,0 +1,31 @@
+services:
+  api:
+    build:
+      dockerfile: Dockerfile.dev
+      context: .
+    volumes:
+      - .:/server
+      - /server/node_modules
+    ports:
+      - '8000:8000'
+    command: pnpm run start:dev
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0
+    ports:
+      - '3306:3306'
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    volumes:
+      - arain_mysql_data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d
+
+volumes:
+  arain_mysql_data:
