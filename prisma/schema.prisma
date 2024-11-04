@@ -9,6 +9,156 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "mysql"
+  url      = env("PRISMA_DATABASE_URL")
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  name     String
+  password String
+  salt     String
+  role     Int    @default(1) @db.TinyInt // 1: 일반 사용자, 2: admin, 3: super admin
+
+  authorities              UserAuthority[]
+  positionId               Int?
+  position                 Position?               @relation(fields: [positionId], references: [id])
+  responsibilityOfOfficeId Int?
+  responsibilityOfOffice   ResponsibilityOfOffice? @relation(fields: [responsibilityOfOfficeId], references: [id])
+  jobId                    Int?
+  job                      Job?                    @relation(fields: [jobId], references: [id])
+}
+
+model UserAuthority {
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  authorityId Int
+  authority   Authority @relation(fields: [authorityId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@id([userId, authorityId])
+}
+
+model Authority {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique @db.VarChar(50)
+  description String? @db.VarChar(255)
+
+  parent        AuthorityHierarchy[]    @relation("Parent")
+  child         AuthorityHierarchy[]    @relation("Child")
+  users         UserAuthority[]
+  organizations OrganizationAuthority[]
+  roles         RoleAuthority[]
+}
+
+model AuthorityHierarchy {
+  parentId Int
+  parent   Authority @relation(fields: [parentId], references: [id], name: "Parent")
+  childId  Int
+  child    Authority @relation(fields: [childId], references: [id], name: "Child")
+
+  @@id([parentId, childId])
+}
+
+model BaseAuthority {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique @db.VarChar(50)
+  description String? @db.VarChar(255)
+  programCode String? @db.VarChar(50)
+
+  domainId          Int
+  domain            BaseAuthorityDomain             @relation(fields: [domainId], references: [id])
+  actionButtonMenus ActionButtonMenuBaseAuthority[]
+}
+
+model BaseAuthorityDomain {
+  id              Int             @id @default(autoincrement())
+  name            String          @unique @db.VarChar(50)
+  baseAuthorities BaseAuthority[]
+}
+
+model OrganizationAuthority {
+  organizationId Int
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  authorityId    Int
+  authority      Authority    @relation(fields: [authorityId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@id([organizationId, authorityId])
+}
+
+model Organization {
+  id   Int    @id @default(autoincrement())
+  name String @unique @db.VarChar(50)
+
+  authorities OrganizationAuthority[]
+}
+
+model RoleAuthority {
+  roleId      Int
+  role        Role      @relation(fields: [roleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  authorityId Int
+  authority   Authority @relation(fields: [authorityId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@id([roleId, authorityId])
+}
+
+model Role {
+  id Int @id @default(autoincrement())
+
+  authorities              RoleAuthority[]
+  jobId                    Int?
+  job                      Job?                    @relation(fields: [jobId], references: [id])
+  positionId               Int?
+  position                 Position?               @relation(fields: [positionId], references: [id])
+  responsibilityOfOfficeId Int?
+  responsibilityOfOffice   ResponsibilityOfOffice? @relation(fields: [responsibilityOfOfficeId], references: [id])
+}
+
+// INFO: 직위
+model Position {
+  id   Int    @id @default(autoincrement())
+  name String @unique @db.VarChar(50)
+  user User[]
+  role Role[]
+}
+
+// INFO: 직책
+model ResponsibilityOfOffice {
+  id   Int    @id @default(autoincrement())
+  name String @unique @db.VarChar(50)
+  user User[]
+  role Role[]
+}
+
+// INFO: 직무
+model Job {
+  id   Int    @id @default(autoincrement())
+  name String @unique @db.VarChar(50)
+  user User[]
+  role Role[]
+}
+
+model ActionButtonMenu {
+  id              Int                             @id @default(autoincrement())
+  name            String                          @db.VarChar(50)
+  programCodes    ActionButtonMenuProgramCode[]
+  baseAuthorities ActionButtonMenuBaseAuthority[]
+}
+
+model ActionButtonMenuBaseAuthority {
+  actionButtonMenuId Int
+  actionButtonMenu   ActionButtonMenu @relation(fields: [actionButtonMenuId], references: [id])
+  baseAuthorityId    Int
+  baseAuthority      BaseAuthority    @relation(fields: [baseAuthorityId], references: [id])
+
+  @@id([actionButtonMenuId, baseAuthorityId])
+}
+
+model ActionButtonMenuProgramCode {
+  actionButtonMenuId Int
+  actionButtonMenu   ActionButtonMenu @relation(fields: [actionButtonMenuId], references: [id])
+  actionButtonCode   String           @db.VarChar(50)
+  programCode        String           @db.VarChar(50)
+
+  @@id([actionButtonMenuId, actionButtonCode, programCode])
 }

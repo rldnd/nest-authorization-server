@@ -9,7 +9,7 @@ class App {
 
   async init() {
     this.#configureSwagger();
-    this.#enableCors({ origin: true, credentials: true });
+    this.#enableCors({ origin: '*', credentials: true });
 
     await this.app.listen(this.#configService.get('PORT') || 8000, () => {
       console.info(`Server Started on http://localhost:${this.#configService.get('PORT')} 🔥`);
