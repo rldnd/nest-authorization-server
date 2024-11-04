@@ -17,17 +17,17 @@ class App {
   }
 
   configureMiddleware(...middlewares: any[]) {
-    this.app.use(...middlewares);
+    if (middlewares.length > 0) this.app.use(...middlewares);
     return this;
   }
 
   configurePipes(...pipes: PipeTransform<any>[]) {
-    this.app.useGlobalPipes(...pipes);
+    if (pipes.length > 0) this.app.useGlobalPipes(...pipes);
     return this;
   }
 
   configureInterceptors(...interceptors: NestInterceptor[]) {
-    this.app.useGlobalInterceptors(...interceptors);
+    if (interceptors.length > 0) this.app.useGlobalInterceptors(...interceptors);
     return this;
   }
 
