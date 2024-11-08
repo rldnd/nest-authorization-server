@@ -16,12 +16,13 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  email    String @unique
-  name     String
-  password String
-  salt     String
-  role     Int    @default(1) @db.TinyInt // 1: 일반 사용자, 2: admin, 3: super admin
+  id           Int     @id @default(autoincrement())
+  email        String  @unique
+  name         String
+  password     String
+  salt         String
+  role         Int     @default(1) @db.TinyInt // 1: 일반 사용자, 2: admin, 3: super admin
+  refreshToken String? @db.VarChar(255)
 
   authorities              UserAuthority[]
   positionId               Int?

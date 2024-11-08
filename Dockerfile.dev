@@ -24,11 +24,8 @@ RUN npm install -g pnpm
 
 COPY package.json pnpm-lock.yaml ./
 
-RUN pnpm install --prod
-
 COPY --from=builder /server ./
-COPY --from=builder /server/dist ./dist
 
 EXPOSE 8000
 
-CMD ["npm", "run", "start:dev"]
+CMD ["pnpm", "run", "start:dev:migrate"]
