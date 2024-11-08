@@ -16,6 +16,7 @@
     "docker-compose-stop:dev": "sh ./scripts/docker-compose-stop-dev.sh",
     "docker-compose:prod": "sh ./scripts/docker-compose-prod.sh",
     "docker-compose-stop:prod": "sh ./scripts/docker-compose-stop-prod.sh",
+    "prisma:generate": "prisma generate",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
