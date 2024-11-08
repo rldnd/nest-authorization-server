@@ -1,13 +1,19 @@
-import { Controller, Get } from '@nestjs/common';
-import { Position } from '@prisma/client';
-import { AppService } from './app.service';
+import { Controller, Get, Response } from '@nestjs/common';
+import { ApiExcludeEndpoint, ApiOperation, ApiTags } from '@nestjs/swagger';
+import type { Response as ResponseType } from 'express';
 
 @Controller()
+@ApiTags('Health')
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  @Get('/health')
+  @ApiOperation({ summary: '서버 Health Check API' })
+  healthCheck(@Response() response: ResponseType) {
+    response.status(200).json({ status: 'HEALTHY' });
+  }
 
-  @Get()
-  getHello(): Promise<Position[]> {
-    return this.appService.getHello();
+  @Get('')
+  @ApiExcludeEndpoint()
+  redirectSwagger(@Response() response: ResponseType) {
+    response.redirect('/api-docs');
   }
 }

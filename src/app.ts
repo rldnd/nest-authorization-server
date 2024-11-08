@@ -45,6 +45,7 @@ class App {
         },
         'access-token'
       )
+      .addServer(this.#configService.get('API_URL')!)
       .build();
 
     const document = SwaggerModule.createDocument(this.app, swaggerConfig);
