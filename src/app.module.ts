@@ -1,9 +1,12 @@
-import { Module } from '@nestjs/common';
+import { Module, Provider } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import appConfig from './config/app.config';
 import { GlobalModule } from './modules/global';
 import { APIModule } from './modules';
+import { Filters } from './common/filter';
+
+const providers: Provider[] = [...Filters];
 
 @Module({
   imports: [
@@ -16,5 +19,6 @@ import { APIModule } from './modules';
     APIModule,
   ],
   controllers: [AppController],
+  providers,
 })
 export class AppModule {}

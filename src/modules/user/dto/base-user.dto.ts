@@ -26,4 +26,13 @@ export class BaseUserDTO implements BaseUser {
       role: user.role,
     };
   }
+
+  static fromUser(user: User): BaseUserDTO {
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+    };
+  }
 }
