@@ -29,8 +29,10 @@ export class AuthService {
     return tokens;
   }
 
-  register(registerDTO: RegisterDTO) {
-    return registerDTO;
+  async register(registerDTO: RegisterDTO) {
+    const salt = bcrypt.genSaltSync(this.config.SALT_ROUND);
+    const password = bcrypt.hashSync(registerDTO.password, salt);
+    await this.userService.createUser({ ...registerDTO, salt, password });
   }
 
   refresh() {}
@@ -47,7 +49,7 @@ export class AuthService {
     const key = nanoid();
 
     const accessToken = this.jwtService.sign(
-      { ...value },
+      { ...value, key },
       { ...options, expiresIn: this.config.JWT_ACCESS_TOKEN_EXPIRES_IN }
     );
     const refreshToken = this.jwtService.sign(
@@ -55,6 +57,6 @@ export class AuthService {
       { ...options, expiresIn: this.config.JWT_REFRESH_TOKEN_EXPIRES_IN }
     );
 
-    return TokenDTO.of({ accessToken, refreshToken });
+    return new TokenDTO({ accessToken, refreshToken });
   }
 }

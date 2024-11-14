@@ -1,9 +1,10 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Res } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginDTO } from './dto/login.dto';
-import { TokenDTO } from './dto/token.dto';
 import { RegisterDTO } from './dto/register.dto';
+import { TokenDTO } from './dto/token.dto';
+import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -20,8 +21,10 @@ export class AuthController {
   @Post('register')
   @ApiBody({ type: RegisterDTO })
   @ApiOperation({ summary: '회원가입' })
-  async register(@Body() registerDTO: RegisterDTO) {
-    return this.authService.register(registerDTO);
+  async register(@Res() res: Response, @Body() registerDTO: RegisterDTO) {
+    console.log(registerDTO);
+    await this.authService.register(registerDTO);
+    return res.status(201).send();
   }
 
   @Post('refresh')

@@ -2,6 +2,9 @@ import { PrismaService } from '@/database/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { UserException } from './exception/user.exception';
 import { USER_ERROR_CODE } from './exception/error-code';
+import { BaseUserDTO } from './dto/base-user.dto';
+import { UserDTO } from './dto/user.dto';
+import { CreateUserDTO } from './dto/create-user.dto';
 
 @Injectable()
 export class UserService {
@@ -14,7 +17,7 @@ export class UserService {
 
     if (!user) throw new UserException(USER_ERROR_CODE.USER_NOT_FOUND);
 
-    return user;
+    return new BaseUserDTO(user);
   }
 
   async findUserByEmail(email: string) {
@@ -24,6 +27,23 @@ export class UserService {
 
     if (!user) throw new UserException(USER_ERROR_CODE.EMAIL_NOT_FOUND);
 
-    return user;
+    return new UserDTO(user);
+  }
+
+  async createUser(createUserDTO: CreateUserDTO) {
+    await this.checkDuplicatedEmail(createUserDTO.email);
+    return await this.database.user.create({
+      data: { ...createUserDTO },
+    });
+  }
+
+  async checkDuplicatedEmail(email: string) {
+    const user = await this.database.user.findUnique({
+      where: { email },
+    });
+
+    if (user) throw new UserException(USER_ERROR_CODE.EMAIL_DUPLICATED);
+
+    return true;
   }
 }

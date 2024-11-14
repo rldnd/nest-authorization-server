@@ -5,7 +5,7 @@ export interface JwtPayload extends Pick<User, 'id'> {}
 
 export interface TokenPayloadProps {
   id: number;
-  role: UserRole;
+  role: number;
 }
 
 export interface AccessTokenPayload extends TokenPayloadProps {}

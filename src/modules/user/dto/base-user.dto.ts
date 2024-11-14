@@ -1,11 +1,12 @@
 import { User } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
+import { UserRoleResponseDecorator } from '../validation/user-role.validation';
 
-interface BaseUser
+interface BaseUserDTOProps
   extends Omit<User, 'password' | 'salt' | 'positionId' | 'responsibilityOfOfficeId' | 'jobId' | 'refreshToken'> {}
 
 /** 다른 유저를 조회하는 데에 사용하는 DTO */
-export class BaseUserDTO implements BaseUser {
+export class BaseUserDTO implements BaseUserDTOProps {
   @ApiProperty({ type: 'number', description: '사용자 ID' })
   id: number;
 
@@ -15,19 +16,13 @@ export class BaseUserDTO implements BaseUser {
   @ApiProperty({ type: 'string', description: '사용자 이메일' })
   email: string;
 
-  @ApiProperty({ type: 'number', description: '사용자 권한' })
+  @UserRoleResponseDecorator()
   role: number;
 
-  static of(user: BaseUser): BaseUserDTO {
-    return Object.assign(new BaseUserDTO(), user);
-  }
-
-  static fromUser(user: User): BaseUserDTO {
-    return {
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      role: user.role,
-    };
+  constructor(dto: BaseUserDTOProps) {
+    this.id = dto.id;
+    this.name = dto.name;
+    this.email = dto.email;
+    this.role = dto.role;
   }
 }

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { User } from '@prisma/client';
 import { IsEmail, IsNumber, IsString } from 'class-validator';
+import { UserRoleRequestDecorator } from '../validation/user-role.validation';
 
 interface UserDTOProps {
   id: number;
@@ -33,5 +33,19 @@ export class UserDTO implements UserDTOProps {
   @IsString({ message: '문자열이 아닙니다.' })
   salt: string;
 
-  // @ApiProperty({ type: 'number', description: '사용자 권한' })
+  @UserRoleRequestDecorator()
+  role: number;
+
+  @ApiProperty({ type: 'string', description: '리프레시 토큰' })
+  refreshToken: string | null;
+
+  constructor(props: UserDTOProps) {
+    this.id = props.id;
+    this.email = props.email;
+    this.name = props.name;
+    this.password = props.password;
+    this.salt = props.salt;
+    this.role = props.role;
+    this.refreshToken = props.refreshToken;
+  }
 }
