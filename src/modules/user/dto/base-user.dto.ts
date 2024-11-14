@@ -19,12 +19,7 @@ export class BaseUserDTO implements BaseUser {
   role: number;
 
   static of(user: BaseUser): BaseUserDTO {
-    return {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-    };
+    return Object.assign(new BaseUserDTO(), user);
   }
 
   static fromUser(user: User): BaseUserDTO {

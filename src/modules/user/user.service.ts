@@ -16,4 +16,14 @@ export class UserService {
 
     return user;
   }
+
+  async findUserByEmail(email: string) {
+    const user = await this.database.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) throw new UserException(USER_ERROR_CODE.EMAIL_NOT_FOUND);
+
+    return user;
+  }
 }
