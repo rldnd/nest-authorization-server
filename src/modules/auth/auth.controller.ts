@@ -28,6 +28,7 @@ export class AuthController {
 
   @Post('refresh')
   @ApiOperation({ summary: '토큰 재발급' })
+  @ApiResponse({ status: 200, type: TokenDTO })
   async refresh(@Body() tokenDTO: TokenDTO) {
     return this.authService.refresh(tokenDTO);
   }

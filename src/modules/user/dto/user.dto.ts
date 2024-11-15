@@ -39,6 +39,9 @@ export class UserDTO implements UserDTOProps {
   @ApiProperty({ type: 'string', description: '리프레시 토큰' })
   refreshToken: string | null;
 
+  @ApiProperty({ type: 'string', description: '사용자 직책' })
+  position: string;
+
   constructor(props: UserDTOProps) {
     this.id = props.id;
     this.email = props.email;

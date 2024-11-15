@@ -1,8 +1,6 @@
-import { UserRole } from '@/common/@types/user';
-import { USER_ROLES } from '@/common/constants/user';
 import { UserRoleRequestDecorator } from '@/modules/user/validation/user-role.validation';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsEnum, IsString } from 'class-validator';
+import { IsEmail, IsString } from 'class-validator';
 
 interface RegisterDTOProps {
   email: string;

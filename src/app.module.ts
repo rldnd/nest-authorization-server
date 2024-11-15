@@ -4,7 +4,7 @@ import { AppController } from './app.controller';
 import appConfig from './config/app.config';
 import { GlobalModule } from './modules/global';
 import { APIModule } from './modules';
-import { Filters } from './common/filter';
+import { Filters } from './utils/filter';
 
 const providers: Provider[] = [...Filters];
 

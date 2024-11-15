@@ -1,4 +1,6 @@
 import { TokenPayload } from '@/common/@types/jwt';
+import { BaseUserDTO } from '@/modules/user/dto/base-user.dto';
+import { UserService } from '@/modules/user/user.service';
 import { Injectable } from '@nestjs/common';
 import { JwtService, TokenExpiredError } from '@nestjs/jwt';
 import { PassportStrategy } from '@nestjs/passport';
@@ -9,7 +11,10 @@ import { PassportException } from '../exception/passport.exception';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
-  constructor(private readonly jwtService: JwtService) {
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly userService: UserService
+  ) {
     super();
   }
 
@@ -22,7 +27,8 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       if (!('id' in payload) || !('role' in payload) || !('key' in payload))
         throw new PassportException(PASSPORT_ERROR_CODE.INVALID_TOKEN);
 
-      return payload;
+      const user = await this.userService.findUserById(payload.id);
+      return new BaseUserDTO(user);
     } catch (err) {
       if (err instanceof TokenExpiredError) {
         throw new PassportException(PASSPORT_ERROR_CODE.TOKEN_EXPIRED);

@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
-import { JwtStrategy } from './strategies/jwt.strategy';
-import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
+import { UserModule } from '../user/user.module';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         secret: configService.get('JWT_SECRET'),
       }),
     }),
+    UserModule,
   ],
   providers: [JwtStrategy],
   exports: [JwtStrategy],
