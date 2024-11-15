@@ -20,6 +20,16 @@ export class UserService {
     return new BaseUserDTO(user);
   }
 
+  async findUserById(id: number) {
+    const user = await this.database.user.findUnique({
+      where: { id },
+    });
+
+    if (!user) throw new UserException(USER_ERROR_CODE.USER_NOT_FOUND);
+
+    return new UserDTO(user);
+  }
+
   async findUserByEmail(email: string) {
     const user = await this.database.user.findUnique({
       where: { email },

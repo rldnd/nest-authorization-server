@@ -15,7 +15,8 @@ export class TokenDTO implements TokenDTOProps {
   @IsJWT({ message: 'Not Valid JWT Token' })
   refreshToken: string;
 
-  constructor(props: TokenDTOProps) {
+  constructor(props?: TokenDTOProps) {
+    if (!props) return;
     this.accessToken = props.accessToken;
     this.refreshToken = props.refreshToken;
   }

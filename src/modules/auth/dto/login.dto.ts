@@ -15,7 +15,8 @@ export class LoginDTO implements LoginDTOProps {
   @IsString({ message: '비밀번호는 문자열이어야 합니다.' })
   password: string;
 
-  constructor(props: LoginDTOProps) {
+  constructor(props?: LoginDTOProps) {
+    if (!props) return;
     this.email = props.email;
     this.password = props.password;
   }

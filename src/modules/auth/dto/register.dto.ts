@@ -27,7 +27,8 @@ export class RegisterDTO implements RegisterDTOProps {
   @UserRoleRequestDecorator()
   role: number;
 
-  constructor(props: RegisterDTOProps) {
+  constructor(props?: RegisterDTOProps) {
+    if (!props) return;
     this.email = props.email;
     this.name = props.name;
     this.password = props.password;

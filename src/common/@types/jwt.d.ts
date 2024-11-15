@@ -8,8 +8,6 @@ export interface TokenPayloadProps {
   role: number;
 }
 
-export interface AccessTokenPayload extends TokenPayloadProps {}
-
-export interface RefreshTokenPayload extends TokenPayloadProps {
+export interface TokenPayload extends TokenPayloadProps {
   key: string;
 }

@@ -22,14 +22,13 @@ export class AuthController {
   @ApiBody({ type: RegisterDTO })
   @ApiOperation({ summary: '회원가입' })
   async register(@Res() res: Response, @Body() registerDTO: RegisterDTO) {
-    console.log(registerDTO);
     await this.authService.register(registerDTO);
     return res.status(201).send();
   }
 
   @Post('refresh')
   @ApiOperation({ summary: '토큰 재발급' })
-  async refresh() {
-    return this.authService.refresh();
+  async refresh(@Body() tokenDTO: TokenDTO) {
+    return this.authService.refresh(tokenDTO);
   }
 }
